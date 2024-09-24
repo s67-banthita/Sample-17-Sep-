@@ -12,6 +12,9 @@ void setup() {
     int w = width/cols;
     int h = height/rows;
 
+    strokeWeight(1); // Thin stroke for the grid lines
+    table(cols, rows);
+
     int i = 0;
     while (i < rows) {
 
@@ -35,5 +38,15 @@ void draw_lines(int x, int y, int n){
      
         line(x + i*20 , y, x + i*20, y + 40);
         i++;
+    }
+}
+
+
+void table(int xlength, int ylength) {
+    for (int i = 1; i <= xlength; i++) {
+        line(width / xlength * i, 0, width / xlength * i, height);
+    }
+    for (int j = 1; j <= ylength; j++) {
+        line(0, height / ylength * j, width, height / ylength * j);
     }
 }

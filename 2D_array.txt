@@ -1,52 +1,89 @@
+Integer[][] numbers; 
+boolean[][] isFlipped; 
+int[][] selectedIndices = {{-1, -1}, {-1, -1}}; 
+int matches = 0;
+boolean isMatching = false;
+
+void settings() {
+  size(500, 500); 
+}
+
+
 void setup() {
-    size(500, 500);
-    strokeWeight(12);
-    background(255);
+  // 2D array (4 rows, 3 columns)
+  numbers = new Integer[4][3]; 
 
-    // 2D array of sample values
-    int[][] grid = {{1, 2, 1, 2}, {3, 4, 1, 2}, {2, 1, 3, 4}};
+  // Fill the 2D array with numbers (1-6, with duplicates)
+  int[] numberValues = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6}; 
 
-    int rows = grid.length;
-    int cols = grid[0].length;
+  int k = 0;
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 3; j++) {
+      numbers[i][j] = numberValues[k];
+      k++;
+    }
+  }
+  
+  isFlipped = new boolean[4][3]; 
+  for (int i = 0; i < isFlipped.length; i++) {
+    for (int j = 0; j < isFlipped[i].length; j++) {
+      isFlipped[i][j] = false;
+    }
+  }
+}
 
-    int w = width/cols;
-    int h = height/rows;
 
-    strokeWeight(1); // Thin stroke for the grid lines
-    table(cols, rows);
+void draw() {
+  background(255);
+  
+  int cardWidth = width / 4; 
+  int cardHeight = height / 3; 
+  
+  // Loop through the 2D array
+  for (int i = 0; i < numbers.length; i++) {
+    for (int j = 0; j < numbers[i].length; j++) {
+      int x = i * cardWidth;
+      int y = j * cardHeight;
 
-    int i = 0;
-    while (i < rows) {
-
-        int j = 0;
-        while (j < cols) {
-            println(i, j, " ", grid[i][j]);
-
-            draw_lines(10+j * w, 10+i * h, grid[i][j]);
-            println(i,j,grid[i][j]);
-            j++;
+      fill(255);
+      rect(x, y, cardWidth, cardHeight);  
+      if (isFlipped[i][j]) { 
+        fill(150); 
+        
+        for (int k = 0; k < numbers[i][j]; k++) {
+          int lineX = x + cardWidth / 2 - 10 + k * 8; 
+          int lineY = y + cardHeight / 2 - 20;
+          line(lineX, lineY, lineX, lineY + 60); 
         }
-
-        i++;
+      }
     }
+  }
 }
 
+void mousePressed() {
+  int cardWidth = width / 4; 
+  int cardHeight = height / 3; 
 
-void draw_lines(int x, int y, int n){
-    int i = 0;
-    while (i < n) {
-     
-        line(x + i*20 , y, x + i*20, y + 40);
-        i++;
-    }
-}
+  for (int i = 0; i < numbers.length; i++) {
+    for (int j = 0; j < numbers[i].length; j++) {
+      int x = i * cardWidth;
+      int y = j * cardHeight;
 
+      if (mouseX > x && mouseX < x + cardWidth &&
+          mouseY > y && mouseY < y + cardHeight && 
+          !isFlipped[i][j]) { 
+        isFlipped[i][j] = true; 
 
-void table(int xlength, int ylength) {
-    for (int i = 1; i <= xlength; i++) {
-        line(width / xlength * i, 0, width / xlength * i, height);
+        if (selectedIndices[0][0] == -1) {
+          selectedIndices[0][0] = i;
+          selectedIndices[0][1] = j;
+        } else if (selectedIndices[1][0] == -1) {
+          selectedIndices[1][0] = i;
+          selectedIndices[1][1] = j;
+          isMatching = true; 
+        }
+        break; 
+      }
     }
-    for (int j = 1; j <= ylength; j++) {
-        line(0, height / ylength * j, width, height / ylength * j);
-    }
+  }
 }
